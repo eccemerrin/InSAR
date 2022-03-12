@@ -16,12 +16,17 @@ from insar_eml import utils
 train_x, train_y, topology = utils.create_dataset()
 test_x, test_y, test_topology = utils.create_dataset()
 
+#uncomment the line of the model you want to try
 model = models.insar_model()
+#model = models.create_vea_model()
+#model = models.volcanic_encoder_decoder()
 
 normalized_train_x = utils.normalize(train_x)
 normalized_train_y = utils.normalize(train_y)
 normalized_topology = utils.normalize(topology)
 
+#this loss is for insar_model model. If you want to try another model please choose mse for both volcanic encoder decoder
+# model and vae model. Choose sgd optimizer for volcanic encoder decoder and choose adam for vae.
 model.compile(loss = utils.ssim_loss, optimizer = "Adam")
 
 model.fit([normalized_train_x, normalized_topology], normalized_train_y, epochs = 3)
