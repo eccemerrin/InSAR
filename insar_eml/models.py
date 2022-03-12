@@ -38,5 +38,57 @@ def insar_model():
     return model
 
 
+ def create_vae_model():
 
+     class Sampling(layers.Layer):
+         #Uses (z_mean, z_log_var) to sample z, the vector encoding a digit.
+         def call(self, inputs):
+             z_mean, z_log_var = inputs
+             batch = tf.shape(z_mean)[0]
+             dim = tf.shape(z_mean)[1]
+             epsilon = tf.keras.backend.random_normal(shape=(batch, dim))
+             return z_mean + tf.exp(0.5 * z_log_var) * epsilon
 
+     latent_dim = 2
+     encoder_inputs = tf.keras.Input(shape = (9, 40, 40, 1))
+
+     x = tf.keras.layers.Conv3D(64, (2, 3, 3), (1, 1, 1), padding = 'same', activation="relu")(encoder_inputs)
+     x = tf.keras.layers.Conv3D(64, (2, 3, 3), (1, 1, 1), padding = 'same', activation="relu")(x)
+     x = tf.keras.layers.Conv3D(64, (2, 3, 3), (1, 1, 1), padding = 'same', activation="relu")(x)
+     x = tf.keras.layers.MaxPooling3D((3, 1, 1))(x)
+     x = tf.keras.layers.Conv3D(64, (2, 3, 3), (1, 1, 1), padding = 'same', activation="relu")(x)
+     x = tf.keras.layers.MaxPooling3D((3, 1, 1))(x)
+     x = tf.keras.layers.Flatten()(x)
+     x = tf.keras.layers.Dense(16, activation="relu")(x)
+
+     z_mean = tf.keras.layers.Dense(latent_dim, name="z_mean")(x)
+     z_log_var = tf.keras.layers.Dense(latent_dim, name="z_log_var")(x)
+     z = Sampling()((z_mean, z_log_var))
+     encoder = tf.keras.Model(encoder_inputs, z, name="encoder")
+
+     latent_inputs = tf.keras.Input(shape=(latent_dim,))
+     y = tf.keras.layers.Dense(40 * 40 * 64, activation="relu")(latent_inputs)
+     y = tf.keras.layers.Reshape((1, 40, 40, 64))(y)
+     y = tf.keras.layers.Conv3DTranspose(filters=64, kernel_size=(1, 3, 3),
+                                         strides=(1, 1, 1), activation="relu", padding="same")(y)
+     y = tf.keras.layers.Conv3DTranspose(filters=64, kernel_size=(1, 3, 3),
+                                         strides=(1, 1, 1), activation="relu", padding="same")(y)
+     y = tf.keras.layers.Conv3DTranspose(filters=64, kernel_size=(1, 3, 3),
+                                         strides=(1, 1, 1), activation="sigmoid", padding="same")(y)
+     decoder_outputs = tf.math.reduce_sum(y, axis = -1)
+     decoder = tf.keras.Model(latent_inputs, decoder_outputs, name="decoder")
+
+     outputs = decoder(z)
+     vae = tf.keras.Model(inputs=encoder_inputs, outputs=outputs, name="vae")
+
+     # Add KL divergence regularization loss.
+     kl_loss = -0.5 * tf.reduce_mean(z_log_var - tf.square(z_mean) - tf.exp(z_log_var) + 1)
+     vae.add_loss(kl_loss)
+
+     # Loss and optimizer.
+     loss_fn = tf.keras.losses.MeanSquaredError()
+     optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
+     # Configure the model for training.
+     vae.compile(optimizer, loss=loss_fn)
+
+     return vae
