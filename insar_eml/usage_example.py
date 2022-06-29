@@ -12,12 +12,14 @@ sys.path.insert(0, parentdir)
 from insar_eml import models
 from insar_eml import utils
 
+#please indicate the number of pixels. It will allow you to change input dim. of insar_model and input data.
+num_pixels = 70
 
-train_x, train_y, topology = utils.create_dataset()
-test_x, test_y, test_topology = utils.create_dataset()
+train_x, train_y, topology = utils.create_dataset( num_pixels = num_pixels)
+test_x, test_y, test_topology = utils.create_dataset(num_pixels = num_pixels)
 
 #uncomment the line of the model you want to try
-model = models.insar_model()
+model = models.parametarized_insar_model(num_pixels = num_pixels)
 #model = models.create_vea_model()
 #model = models.volcanic_encoder_decoder()
 
@@ -33,4 +35,4 @@ model.fit([normalized_train_x, normalized_topology], normalized_train_y, epochs 
 preds_model = model.predict([test_x, test_topology])
 
 mse = tf.keras.losses.MeanSquaredError()
-print(mse(normalized_train_y.reshape(500,40,40,1), preds_model).numpy())
+print(mse(normalized_train_y.reshape(500,num_pixels, num_pixels, 1), preds_model).numpy())

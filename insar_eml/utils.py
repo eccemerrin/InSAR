@@ -55,7 +55,7 @@ def get_y(start, deltax, radius = 2, num_pixels = 40):
     return getimg(ix=start[0], iy=start[1], radius=radius, num_pixels=num_pixels) * deltax
 
 #this function will generate train_x, train_y and topology datasets.
-def create_dataset(num_samples = 500, shift_mag = 8, num_instants = 9, num_pixels = 40 ):
+def create_dataset(num_samples = 500, shift_mag = 8, num_instants = 9, num_pixels = 40):
     # select a set of random starting centers
     centers = np.random.uniform(10, 30, [num_samples, 2])
 
@@ -69,9 +69,9 @@ def create_dataset(num_samples = 500, shift_mag = 8, num_instants = 9, num_pixel
     for i in range(num_samples):
         x[i, :, :, :, 0] = get_shifts(start=centers[i, :],
                                                   delta=[shifts[i], 0],
-                                                  num_img=num_instants)
+                                                  num_img=num_instants, num_pixels = num_pixels)
         y[i, :, :] = get_y(start=centers[i, :],
-                                       deltax=shifts[i],)
+                                       deltax=shifts[i], num_pixels = num_pixels)
 
         new_shift = np.ones((num_pixels, num_pixels)) * shifts[i]
         topology.append(new_shift)
@@ -79,6 +79,6 @@ def create_dataset(num_samples = 500, shift_mag = 8, num_instants = 9, num_pixel
     topology = np.dstack(topology)
     # To get the shape to be Nx(num_pixels)x(num_pixels), use rollaxis:
     topology = np.rollaxis(topology, -1)
-    topology = topology.reshape((500, 1, 40, 40, 1))
+    topology = topology.reshape((num_samples, 1, num_pixels, num_pixels, 1))
 
     return [x, y, topology]
