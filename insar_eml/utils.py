@@ -9,7 +9,7 @@ def normalize(data):
 
 # Loss function
 def ssim_loss(y_true, y_pred):
-    return 1 - tf.reduce_mean(tf.image.ssim(y_true, y_pred, 2.0))
+    return 1 - tf.reduce_mean(tf.image.ssim(y_true, y_pred, 2.0, filter_size=8))
 
 # code for creating an image: disk centered at [ix, iy], with
 # pixel values 1, the rest of the image has pixel values zero

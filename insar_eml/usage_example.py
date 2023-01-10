@@ -13,7 +13,7 @@ from insar_eml import models
 from insar_eml import utils
 
 #please indicate the number of pixels. It will allow you to change input dim. of insar_model and input data.
-num_pixels = 70
+num_pixels = 48
 
 train_x, train_y, topology = utils.create_dataset( num_pixels = num_pixels)
 test_x, test_y, test_topology = utils.create_dataset(num_pixels = num_pixels)
