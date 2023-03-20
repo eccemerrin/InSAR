@@ -1,0 +1,24 @@
+--- !pf.ConfigTypeA
+id: gfs_ismetpasa
+modelling_code_id: psgrn_pscmp.2008a
+regions: []
+references: []
+earthmodel_1d: |2
+      0.             2.5            1.2            2.1           50.            50.
+     17.             6.2            3.6            2.8          600.           400.
+     17.             6.6            3.7            2.9         1432.           600.
+     41.             7.3            4.             3.1         1499.           600.
+  mantle
+     41.             8.2            4.7            3.4         1370.           600.            5.000E+17      1.000E+19      1.
+     200.             8.2            4.7            3.4         1370.           600.            5.000E+17      1.000E+19      1.
+sample_rate: 1.1574074074074073e-05
+component_scheme: elastic10
+tabulated_phases: []
+ncomponents: 10
+receiver_depth: 0.0
+source_depth_min: 0.0
+source_depth_max: 200000.0
+source_depth_delta: 2000.0
+distance_min: 0.0
+distance_max: 500000.0
+distance_delta: 2000.0

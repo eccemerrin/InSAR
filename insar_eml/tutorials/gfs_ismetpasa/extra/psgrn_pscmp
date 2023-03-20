@@ -1,0 +1,13 @@
+--- !pf.PsGrnPsCmpConfig
+tmin_days: 0.0
+tmax_days: 1.0
+gf_outdir: psgrn_functions
+psgrn_config: !pf.PsGrnConfig
+  version: 2008a
+  sampling_interval: 1.0
+  observation_depth: 0.0
+pscmp_config: !pf.PsCmpConfig
+  version: 2008a
+  observation: !pf.PsCmpScatter {}
+  rectangular_fault_size_factor: 1.0
+  rectangular_source_patches: []
