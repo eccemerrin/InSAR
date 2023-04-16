@@ -36,3 +36,21 @@ preds_model = model.predict([test_x, test_topology])
 
 mse = tf.keras.losses.MeanSquaredError()
 print(mse(normalized_train_y.reshape(500,num_pixels, num_pixels, 1), preds_model).numpy())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
